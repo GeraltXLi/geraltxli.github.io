@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://geraltxli.github.io/blog</id>
     <title>GeraltXLi</title>
-    <updated>2021-05-30T13:39:13.031Z</updated>
+    <updated>2021-05-30T14:13:08.128Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://geraltxli.github.io/blog"/>
     <link rel="self" href="https://geraltxli.github.io/blog/atom.xml"/>
@@ -41,7 +41,7 @@
 <hr>
 <h3 id="代码">代码</h3>
 <p>自己研究代码比较清晰，根据<a href="https://golang.org/src/crypto/cipher/example_test.go">golang标准库AES实例代码</a>，再参考网上的PKCS7填充，最后进行base64的编码（因为加密后有些字符不可见）。最后Encrypt和Dncrypt两个就是AES加解密（CBC模式，PKCS7填充）封装后的函数，密钥位数限定16,24,32（要注意的是密钥无论多少，blocksize都是固定16）</p>
-<pre><code>package encrypt
+<pre><code class="language-go">package encrypt
 
 import (
    &quot;bytes&quot;
@@ -141,6 +141,11 @@ func Dncrypt(rawData string,key []byte) (string,error) {
    	return &quot;&quot;,err
    }
    return string(dnData),nil
+}
+</code></pre>
+<pre><code class="language-json">{
+    &quot;json&quot;:&quot;123&quot;,
+    &quot;hah&quot;:&quot;123&quot;
 }
 </code></pre>
 <hr>

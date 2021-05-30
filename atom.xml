@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://geraltxli.github.io/blog</id>
-    <title>Toussaint</title>
-    <updated>2021-05-30T07:38:49.511Z</updated>
+    <title>GeraltXLi</title>
+    <updated>2021-05-30T07:51:09.611Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://geraltxli.github.io/blog"/>
     <link rel="self" href="https://geraltxli.github.io/blog/atom.xml"/>
     <subtitle>The flash that cuts through darkness, the light that breaks the night.</subtitle>
     <logo>https://geraltxli.github.io/blog/images/avatar.png</logo>
     <icon>https://geraltxli.github.io/blog/favicon.ico</icon>
-    <rights>All rights reserved 2021, Toussaint</rights>
+    <rights>All rights reserved 2021, GeraltXLi</rights>
     <entry>
         <title type="html"><![CDATA[一次完整的网络请求过程]]></title>
         <id>https://geraltxli.github.io/blog/post/yi-ci-wan-zheng-de-wang-luo-qing-qiu-guo-cheng/</id>

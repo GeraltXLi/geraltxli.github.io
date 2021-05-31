@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://geraltxli.github.io/blog</id>
     <title>GeraltXLi</title>
-    <updated>2021-05-30T15:06:20.975Z</updated>
+    <updated>2021-05-31T02:48:29.602Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://geraltxli.github.io/blog"/>
     <link rel="self" href="https://geraltxli.github.io/blog/atom.xml"/>
@@ -11,15 +11,36 @@
     <icon>https://geraltxli.github.io/blog/favicon.ico</icon>
     <rights>All rights reserved 2021, GeraltXLi</rights>
     <entry>
-        <title type="html"><![CDATA[Gridea扩展]]></title>
+        <title type="html"><![CDATA[Gridea扩展(一)- 代码高亮]]></title>
         <id>https://geraltxli.github.io/blog/post/gridea-kuo-zhan/</id>
         <link href="https://geraltxli.github.io/blog/post/gridea-kuo-zhan/">
         </link>
         <updated>2021-05-30T14:27:40.000Z</updated>
-        <content type="html"><![CDATA[<ul>
-<li>代码高亮</li>
-<li>搜索</li>
-</ul>
+        <summary type="html"><![CDATA[<blockquote>
+<p>没想到Gridea默认没有代码高亮，那只能自己来了，使用<strong>highlightjs</strong>，修改一下主题里代码，   引入一下就好了。</p>
+</blockquote>
+]]></summary>
+        <content type="html"><![CDATA[<blockquote>
+<p>没想到Gridea默认没有代码高亮，那只能自己来了，使用<strong>highlightjs</strong>，修改一下主题里代码，   引入一下就好了。</p>
+</blockquote>
+<!-- more -->
+<h2 id="代码高亮">代码高亮</h2>
+<ol>
+<li>下载<a href="https://highlightjs.org/">highlight.js</a>，点<code>Get Version</code>去下载进行，里面也不少各种语言等之类的选择，一般默认就够用了</li>
+</ol>
+<figure data-type="image" tabindex="1"><img src="https://geraltxli.github.io/blog/post-images/1622428479016.png" alt="" loading="lazy"></figure>
+<ol start="2">
+<li>
+<p>下载完后解压，简单点就把整个文件夹<code>highlight</code>都丢到gridea数据目录的<code>static</code>目录下（不过其实也可以直接copy里面的<code>highlight.pack.js</code>和<code>styles</code>目录）</p>
+</li>
+<li>
+<p>去<code>themes</code>目录下修改，一般只有文章会用到，所以直接修改<code>post.ejs</code>。在head里加几行代码就行了，这里我选了<code>github-dark</code>样式，这个看自己爱好</p>
+</li>
+</ol>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;&lt;%= themeConfig.domain %&gt;/highlight/styles/github-dark.css&quot;&gt;
+    &lt;script src=&quot;&lt;%= themeConfig.domain %&gt;/highlight/highlight.pack.js&quot;&gt;&lt;/script&gt;
+    &lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt;
+</code></pre>
 ]]></content>
     </entry>
     <entry>

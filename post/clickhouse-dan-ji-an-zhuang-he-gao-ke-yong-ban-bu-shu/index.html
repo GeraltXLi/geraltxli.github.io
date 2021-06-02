@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>ClickHouse单机安装，高可用版部署和简单使用 | GeraltXLi</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://geraltxli.github.io/blog/favicon.ico?v=1622651825233">
+<link rel="stylesheet" href="https://geraltxli.github.io/blog/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7NMQS8RTNS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7NMQS8RTNS');
+</script>
+
+
+    <meta name="description" content="最近用于OLAP场景的列式数据库ClickHouse挺火的，这里简单讲一下安装，部署和使用。不过阿里云都有SaaS版直接使用了，没有的才要自己搭🤡
+
+单机版
+1. 安装部署
+官方文档
+单机安装，怎么快怎么来，实际上就这些：
+sudo ap..." />
+    <meta name="keywords" content="clickhouse" />
+    <link rel="stylesheet" type="text/css" href="https://geraltxli.github.io/blog/highlight/styles/github-dark.css">
+    <script src="https://geraltxli.github.io/blog/highlight/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://geraltxli.github.io/blog">
+        <img src="https://geraltxli.github.io/blog/images/avatar.png?v=1622651825233" class="site-logo">
+        <h1 class="site-title">GeraltXLi</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="https://geraltxli.github.io/blog" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="https://geraltxli.github.io/blog/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="https://geraltxli.github.io/blog/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="https://geraltxli.github.io/blog/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      The flash that cuts through darkness, the light that breaks the night.
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/GeraltXLi/blog" target="_blank">GeraltXLi</a> | <a class="rss" href="https://geraltxli.github.io/blog/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">ClickHouse单机安装，高可用版部署和简单使用</h2>
+            <div class="post-date">2021-06-02</div>
+            
+              <div class="feature-container" style="background-image: url('https://geraltxli.github.io/blog/post-images/clickhouse-dan-ji-an-zhuang-he-gao-ke-yong-ban-bu-shu.jpg')">
+              </div>
+            
+            <div class="post-content" v-pre>
+              <p>最近用于OLAP场景的列式数据库ClickHouse挺火的，这里简单讲一下安装，部署和使用。不过阿里云都有SaaS版直接使用了，没有的才要自己搭🤡</p>
+<!-- more -->
+<h1 id="单机版">单机版</h1>
+<h2 id="1-安装部署">1. 安装部署</h2>
+<p><a href="https://clickhouse.tech/docs/en/getting-started/tutorial/">官方文档</a></p>
+<p>单机安装，怎么快怎么来，实际上就这些：</p>
+<pre><code class="language-bash">sudo apt-get install apt-transport-https ca-certificates dirmngr
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv E0C56BD4
+
+echo &quot;deb https://repo.clickhouse.tech/deb/stable/ main/&quot; | sudo tee \
+    /etc/apt/sources.list.d/clickhouse.list
+sudo apt-get update
+
+sudo apt-get install -y clickhouse-server clickhouse-client
+
+sudo service clickhouse-server start
+clickhouse-client
+</code></pre>
+<h2 id="2-启动命令">2. 启动命令</h2>
+<p>如果找不到service的话，debian可以直接去这目录，另外也可以看看实际启动命令是啥，</p>
+<p>启动：</p>
+<pre><code class="language-bash">$debian /usr/sbin/service clickhouse-server start
+
+# 启动配置见
+vim /etc/systemd/system/clickhouse-server.service
+</code></pre>
+<h2 id="3-配置文件">3. 配置文件</h2>
+<h3 id="存储配置">存储配置</h3>
+<p>这里是参考官方文档抄的存储策略，直接写在<code>config.d</code>目录下的<code>storage.xml</code><br>
+(默认SSD，触发条件时迁移hdd)</p>
+<pre><code class="language-xml">&lt;yandex&gt;
+    &lt;storage_configuration&gt;
+        &lt;disks&gt;
+            &lt;fast_ssd&gt;
+                &lt;path&gt;/data/fast_ssd/&lt;/path&gt;
+            &lt;/fast_ssd&gt;
+            &lt;hdd1&gt;
+                &lt;path&gt;/home/clickhouse/hdd1/&lt;/path&gt;
+            &lt;/hdd1&gt;
+        &lt;/disks&gt;
+        &lt;policies&gt;
+            &lt;moving_from_ssd_to_hdd&gt;
+                &lt;volumes&gt;
+                    &lt;hot&gt;
+                        &lt;disk&gt;fast_ssd&lt;/disk&gt;
+                        &lt;max_data_part_size_bytes&gt;1073741824&lt;/max_data_part_size_bytes&gt;
+                    &lt;/hot&gt;
+                    &lt;cold&gt;
+                        &lt;disk&gt;hdd1&lt;/disk&gt;
+                    &lt;/cold&gt;
+                &lt;/volumes&gt;
+                &lt;move_factor&gt;0.2&lt;/move_factor&gt;
+            &lt;/moving_from_ssd_to_hdd&gt;
+        &lt;/policies&gt;
+    &lt;/storage_configuration&gt;
+&lt;/yandex&gt;
+
+</code></pre>
+<h2 id="4-建表">4. 建表</h2>
+<p>举个例子(实际使用必须确定清楚<strong>表引擎</strong>和<strong>聚合函数</strong>)，这里只是现场想个例子展示预聚合用法:</p>
+<ul>
+<li>表引擎使用: <code>MergeTree</code>，简单聚合函数</li>
+<li>order by就是主键了</li>
+<li>按时间分区</li>
+<li>存储策略是优先SSD，上面那个</li>
+<li>存储时间两个月</li>
+</ul>
+<pre><code class="language-sql">create table test.user_info
+(
+    record_time DateTime('Asia/Shanghai'),
+    user String,
+    cost Float64
+)ENGINE = MergeTree()
+ORDER BY (record_time,user)
+PARTITION BY record_time
+SETTINGS storage_policy = 'moving_from_ssd_to_hdd'
+TTL record_time + INTERVAL 2 MONTH
+
+-- 创建物化视图，比如每天每个用户cost总量
+CREATE MATERIALIZED VIEW user_info_daily_mv
+ENGINE = SummingMergeTree()
+PARTITION BY toYYYYMM(day)
+SETTINGS storage_policy = 'moving_from_ssd_to_hdd'
+ORDER BY (day,user)
+AS SELECT
+    toStartOfDay(record_time) AS day,
+    user ,
+    sum(cost) as cost_count
+FROM test.user_info
+GROUP BY (day,user)
+</code></pre>
+<h1 id="集群版带副本">集群版（带副本）</h1>
+<h2 id="1-zookeeper集群部署">1. zookeeper集群部署</h2>
+<blockquote>
+<p>正式环境貌似要设置zookeeper的日志清理</p>
+</blockquote>
+<h3 id="测试用compose直接起">测试用compose直接起</h3>
+<pre><code>version: '3.1'
+
+services:
+  zoo1:
+    image: zookeeper
+    restart: always
+    hostname: zoo1
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+
+  zoo2:
+    image: zookeeper
+    restart: always
+    hostname: zoo2
+    ports:
+      - 2182:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zoo3:2888:3888;2181
+
+  zoo3:
+    image: zookeeper
+    restart: always
+    hostname: zoo3
+    ports:
+      - 2183:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+</code></pre>
+<h3 id="手动安装">手动安装</h3>
+<p>这部分删了，手动装挺麻烦的，这部分不大确定，虽然是能跑起来</p>
+<h2 id="2-安装clickhouse">2. 安装clickhouse</h2>
+<p>同上</p>
+<h2 id="3-更新配置2分片2副本">3. 更新配置(2分片2副本)</h2>
+<blockquote>
+<p>不建议一个clickhouse-server拥有两个replicas来自不同shard。（除了性能问题，还会存在分布式DDL无法使用）<br>
+见<a href="https://altinity.com/blog/2018/5/10/circular-replication-cluster-topology-in-clickhouse">CIRCULAR REPLICATION CLUSTER TOPOLOGY IN CLICKHOUSE</a>中的设计和<a href="https://github.com/ClickHouse/ClickHouse/issues/7611">github上issue所提的问题</a></p>
+</blockquote>
+<p>即每台机器是代表某个分片的某个副本</p>
+<h3 id="所有配置文件">所有配置文件</h3>
+<ul>
+<li>config.xml (主配置文件)</li>
+<li>users.xml (用户及配置限制)</li>
+<li>storeage.xml (存储与策略配置)</li>
+<li>metrika.xml（集群配置）</li>
+</ul>
+<h3 id="configxml-主配置文件">config.xml (主配置文件)</h3>
+<pre><code>&lt;listen_host&gt;0.0.0.0&lt;/listen_host&gt;
+</code></pre>
+<h3 id="storagexml-存储与策略配置">storage.xml (存储与策略配置)</h3>
+<p>见单机版，冷热数据划分，实际规则</p>
+<ul>
+<li>part超过1G的迁移</li>
+<li>ssd快不够容量时迁移</li>
+</ul>
+<h3 id="userxml用户配置">user.xml(用户配置）</h3>
+<ul>
+<li>配置文件见<a href="https://clickhouse.tech/docs/en/operations/settings/settings-users/">user settings</a></li>
+<li>可以设置个默认密码，用户账号管理用<a href="https://clickhouse.tech/docs/en/operations/access-rights/#access-control">SQL-driven workflow</a></li>
+</ul>
+<h3 id="metrikaxml文件cluster配置">metrika.xml文件（cluster配置）</h3>
+<ul>
+<li>申请4台机器，两个分片，2个副本</li>
+<li>1和2的机器在同一个分片下，3和4在同一个分片下</li>
+</ul>
+<pre><code class="language-xml">&lt;yandex&gt;
+    &lt;remote_servers&gt;
+        &lt;test_cluster&gt;
+            &lt;shard&gt;
+                &lt;!-- &lt;secret&gt;&lt;/secret&gt; --&gt;
+                &lt;!-- Optional. Shard weight when writing data. Default: 1. --&gt;
+                &lt;weight&gt;1&lt;/weight&gt;
+                &lt;!-- Optional. Whether to write data to just one of the replicas. Default: false (write data to all replicas). --&gt;
+                &lt;internal_replication&gt;true&lt;/internal_replication&gt;
+                &lt;replica&gt;
+                    &lt;!-- Optional. Priority of the replica for load balancing (see also load_balancing setting). Default: 1 (less value has more priority). --&gt;
+                    &lt;!-- &lt;priority&gt;1&lt;/priority&gt; --&gt;
+                    &lt;host&gt;xx.xxx.xx.xx1&lt;/host&gt;
+                    &lt;port&gt;9000&lt;/port&gt;
+                &lt;/replica&gt;
+                &lt;replica&gt;
+                    &lt;host&gt;xx.xxx.xx.xx2&lt;/host&gt;
+                    &lt;port&gt;9000&lt;/port&gt;
+                &lt;/replica&gt;
+            &lt;/shard&gt;
+            &lt;shard&gt;
+                &lt;weight&gt;1&lt;/weight&gt;
+                &lt;internal_replication&gt;true&lt;/internal_replication&gt;
+                &lt;replica&gt;
+                    &lt;host&gt;xx.xxx.xx.xx3&lt;/host&gt;
+                    &lt;port&gt;9000&lt;/port&gt;
+                &lt;/replica&gt;
+                &lt;replica&gt;
+                    &lt;host&gt;xx.xxx.xx.xx4&lt;/host&gt;
+                    &lt;port&gt;9000&lt;/port&gt;
+                &lt;/replica&gt;
+            &lt;/shard&gt;
+        &lt;/test_cluster&gt;
+    &lt;/remote_servers&gt;
+
+    &lt;!-- 这里其实就是标记当前机器属于哪个shard，以及副本代号 --&gt;
+    &lt;macros&gt;
+        &lt;shard&gt;01&lt;/shard&gt;
+        &lt;replica&gt;xx.xxx.xx.xx1&lt;replica&gt;
+    &lt;/macros&gt;
+
+    &lt;!-- ZK--&gt;
+    &lt;zookeeper&gt;
+        &lt;node index=&quot;1&quot;&gt;
+            &lt;host&gt;xx.xxx.xx.xx1&lt;/host&gt;
+            &lt;port&gt;2181&lt;/port&gt;
+        &lt;/node&gt;
+        &lt;node index=&quot;2&quot;&gt;
+            &lt;host&gt;xx.xxx.xx.xx2&lt;/host&gt;
+            &lt;port&gt;2182&lt;/port&gt;
+        &lt;/node&gt;
+        &lt;node index=&quot;3&quot;&gt;
+            &lt;host&gt;xx.xxx.xx.xx3&lt;/host&gt;
+            &lt;port&gt;2183&lt;/port&gt;
+        &lt;/node&gt;
+    &lt;/zookeeper&gt;
+    
+&lt;/yandex&gt;
+</code></pre>
+<h3 id="宏定义统一建表语句">宏定义(统一建表语句)</h3>
+<p>这里不设置layer层了，没必要</p>
+<h4 id="记得每个节点都必须更新这个"><strong>记得每个节点都必须更新这个！！！</strong></h4>
+<h4 id="注意同一个shard的节点的shard配置必须一致"><strong>注意同一个shard的节点的shard配置必须一致！！</strong></h4>
+<pre><code class="language-xml">&lt;macros&gt;
+    &lt;shard&gt;01&lt;/shard&gt;
+    &lt;replica&gt;hostname&lt;/replica&gt;
+&lt;/macros&gt;
+</code></pre>
+<h4 id="建表如果带上shard或者replica不能使用分布式ddl">建表如果带上{shard}或者{replica}，不能使用分布式DDL</h4>
+<p>具体见<a href="https://clickhouse.tech/docs/en/engines/table-engines/mergetree-family/replication/">官方文档replication描述</a></p>
+<blockquote>
+<p>The replica name identifies different replicas of the same table. You can use the server name for this, as in the example. The name only needs to be unique within each shard.<br>
+You can define the parameters explicitly instead of using substitutions. This might be convenient for testing and for configuring small clusters. However, you can’t use distributed DDL queries (ON CLUSTER) in this case.</p>
+</blockquote>
+<h3 id="最终配置文件">最终配置文件</h3>
+<h4 id="丢到configd目录下覆盖默认配置">丢到config.d目录下覆盖默认配置</h4>
+<ul>
+<li>xxx.xml（合并了listen配置和storeage配置）</li>
+<li>metrika.xml（单独，这部分是热更新，无需重启）</li>
+</ul>
+<h4 id="用户配置丢到userd目录下覆盖默认配置">用户配置丢到user.d目录下覆盖默认配置</h4>
+<ul>
+<li>users.xml</li>
+</ul>
+<h3 id="集群样例">集群样例</h3>
+<p>具体可以去查看system的cluster表，看看集群配置是否生效了</p>
+<h2 id="4-每个节点启动click-server确定互通">4. 每个节点启动click server(确定互通)</h2>
+<ul>
+<li>9000端口用于clickhouse互通与clickhouse-client</li>
+<li>8123端口为http访问</li>
+</ul>
+<h2 id="5-建表">5. 建表</h2>
+<pre><code class="language-sql">/*分布式DDL建库*/
+CREATE DATABASE test ON CLUSTER 'test_cluster'
+
+/*每台机器跑一次建表，但通过宏定义可以保证每个库建表语句一致*/
+CREATE TABLE test.test_info_local (
+    ......
+)ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}/test/test_info_local','{replica}')
+PARTITION BY record_time
+ORDER BY (record_time)
+TTL record_time + INTERVAL 6 MONTH
+SETTINGS storage_policy = 'moving_from_ssd_to_hdd'
+
+/*分布式DDL建立原始数据分布表*/
+CREATE TABLE  test.test_info_local on CLUSTER 'test_cluster'
+as test.test_info
+ENGINE = Distributed(test_cluster,test,test_info_local,rand())
+
+/*以下不写了，基本看官方文档详细点*/
+/*物化视图有实际table的，只不过默认隐藏，我们也可以手动创建*/
+
+
+/*分布式DDL创建物化视图*/
+/*这里因为提前建好复制表了，不需要再设置engine那些*/
+
+
+
+/**分布式DDL 创建全局视图*/
+
+</code></pre>
+<ul>
+<li>每个实例跑一次建表</li>
+<li>分布式DDL跑一次就够了</li>
+</ul>
+<h2 id="6-实际应用">6. 实际应用</h2>
+<h3 id="写本地表">写本地表</h3>
+<p>最好直接写本地表，因为直接写分布式表，在clickhouse上还要再同步一次，实际上相当于双写了</p>
+<h3 id="读分布式表">读分布式表</h3>
+<h2 id="7-测试">7. 测试</h2>
+<p>性能方面简单的可以看<a href="https://clickhouse.tech/docs/en/introduction/performance/">官方说明</a>，尽量批量写，这里其实还会涉及到clickhouse里part的概念，不细说了</p>
+<blockquote>
+<p>We recommend inserting data in packets of at least 1000 rows, or no more than a single request per second.</p>
+</blockquote>
+<h2 id="8-个人经验">8. 个人经验</h2>
+<ul>
+<li>表引擎要留意清楚，个人一般使用最多的是<code>SummingMergeTree</code>或者<code>AggregatingMergeTree</code>，分布式就加个<code>replica</code>前缀</li>
+<li>clickhouse允许相同主键的数据存在，是否去重以及去重的规则具体看表引擎决定。</li>
+<li>clickhouse不保证part merge的时机，这个是坑，某些实际应用场景时就会感受到的</li>
+<li>可以对视图再进行视图的聚合，不过要注意，本质上是insert事件触发了视图，视图并不知道原表的数据</li>
+</ul>
+<p>有问题欢迎留言~</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://geraltxli.github.io/blog/tag/NhcxUV7yk/" class="tag">
+                    clickhouse
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://geraltxli.github.io/blog/post/gridea-kuo-zhan/">
+                  <h3 class="post-title">
+                    Gridea扩展(一)- 代码高亮
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'f793622868010a23cf01',
+        clientSecret: 'fe2e90c65c7c3ce7dfa52e619d8a807eee42fdc4',
+        repo: 'blog',
+        owner: 'GeraltXLi',
+        admin: ['GeraltXLi'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

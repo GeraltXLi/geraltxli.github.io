@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://geraltxli.github.io/blog</id>
+    <id>https://geraltxli.github.io</id>
     <title>GeraltXLi</title>
-    <updated>2021-06-02T16:37:07.353Z</updated>
+    <updated>2021-06-03T14:59:14.740Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://geraltxli.github.io/blog"/>
-    <link rel="self" href="https://geraltxli.github.io/blog/atom.xml"/>
+    <link rel="alternate" href="https://geraltxli.github.io"/>
+    <link rel="self" href="https://geraltxli.github.io/atom.xml"/>
     <subtitle>The flash that cuts through darkness, the light that breaks the night.</subtitle>
-    <logo>https://geraltxli.github.io/blog/images/avatar.png</logo>
-    <icon>https://geraltxli.github.io/blog/favicon.ico</icon>
+    <logo>https://geraltxli.github.io/images/avatar.png</logo>
+    <icon>https://geraltxli.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, GeraltXLi</rights>
     <entry>
         <title type="html"><![CDATA[ClickHouse单机安装，高可用版部署和简单使用]]></title>
-        <id>https://geraltxli.github.io/blog/post/clickhouse-dan-ji-an-zhuang-he-gao-ke-yong-ban-bu-shu/</id>
-        <link href="https://geraltxli.github.io/blog/post/clickhouse-dan-ji-an-zhuang-he-gao-ke-yong-ban-bu-shu/">
+        <id>https://geraltxli.github.io/post/clickhouse-dan-ji-an-zhuang-he-gao-ke-yong-ban-bu-shu/</id>
+        <link href="https://geraltxli.github.io/post/clickhouse-dan-ji-an-zhuang-he-gao-ke-yong-ban-bu-shu/">
         </link>
         <updated>2021-06-02T15:16:23.000Z</updated>
         <summary type="html"><![CDATA[<p>最近用于OLAP场景的列式数据库ClickHouse挺火的，这里简单讲一下安装，部署和使用。不过阿里云都有SaaS版直接使用了，没有的才要自己搭🤡</p>
@@ -330,8 +330,8 @@ ENGINE = Distributed(test_cluster,test,test_info_local,rand())
     </entry>
     <entry>
         <title type="html"><![CDATA[Gridea扩展(一)- 代码高亮]]></title>
-        <id>https://geraltxli.github.io/blog/post/gridea-kuo-zhan/</id>
-        <link href="https://geraltxli.github.io/blog/post/gridea-kuo-zhan/">
+        <id>https://geraltxli.github.io/post/gridea-kuo-zhan/</id>
+        <link href="https://geraltxli.github.io/post/gridea-kuo-zhan/">
         </link>
         <updated>2021-05-30T14:27:40.000Z</updated>
         <summary type="html"><![CDATA[<blockquote>
@@ -346,7 +346,7 @@ ENGINE = Distributed(test_cluster,test,test_info_local,rand())
 <ol>
 <li>下载<a href="https://highlightjs.org/">highlight.js</a>，点<code>Get Version</code>去下载进行，里面也不少各种语言等之类的选择，一般默认就够用了</li>
 </ol>
-<figure data-type="image" tabindex="1"><img src="https://geraltxli.github.io/blog/post-images/1622428479016.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://geraltxli.github.io/post-images/1622428479016.png" alt="" loading="lazy"></figure>
 <ol start="2">
 <li>
 <p>下载完后解压，简单点就把整个文件夹<code>highlight</code>都丢到gridea数据目录的<code>static</code>目录下（不过其实也可以直接copy里面的<code>highlight.pack.js</code>和<code>styles</code>目录）</p>
@@ -363,8 +363,8 @@ ENGINE = Distributed(test_cluster,test,test_info_local,rand())
     </entry>
     <entry>
         <title type="html"><![CDATA[Golang-AES加密（CBC模式，PKCS7填充）]]></title>
-        <id>https://geraltxli.github.io/blog/post/golang-aes-jia-mi-cbc-mo-shi-pkcs7-tian-chong/</id>
-        <link href="https://geraltxli.github.io/blog/post/golang-aes-jia-mi-cbc-mo-shi-pkcs7-tian-chong/">
+        <id>https://geraltxli.github.io/post/golang-aes-jia-mi-cbc-mo-shi-pkcs7-tian-chong/</id>
+        <link href="https://geraltxli.github.io/post/golang-aes-jia-mi-cbc-mo-shi-pkcs7-tian-chong/">
         </link>
         <updated>2021-05-30T13:33:56.000Z</updated>
         <summary type="html"><![CDATA[<p><a href="https://github.com/FakerGit/go-tools/tree/master/encrypt">代码地址</a></p>
@@ -510,8 +510,8 @@ func Dncrypt(rawData string,key []byte) (string,error) {
     </entry>
     <entry>
         <title type="html"><![CDATA[一次完整的网络请求过程]]></title>
-        <id>https://geraltxli.github.io/blog/post/yi-ci-wan-zheng-de-wang-luo-qing-qiu-guo-cheng/</id>
-        <link href="https://geraltxli.github.io/blog/post/yi-ci-wan-zheng-de-wang-luo-qing-qiu-guo-cheng/">
+        <id>https://geraltxli.github.io/post/yi-ci-wan-zheng-de-wang-luo-qing-qiu-guo-cheng/</id>
+        <link href="https://geraltxli.github.io/post/yi-ci-wan-zheng-de-wang-luo-qing-qiu-guo-cheng/">
         </link>
         <updated>2021-05-30T07:03:38.000Z</updated>
         <summary type="html"><![CDATA[<p>从浏览器访问某个网站时所发生的事情</p>
@@ -536,7 +536,7 @@ func Dncrypt(rawData string,key []byte) (string,error) {
 <p>从客户端到本地DNS服务器是属于递归查询，而DNS服务器之间就是的交互查询就是迭代查询。</p>
 </blockquote>
 <h2 id="二-tcpip-协议栈通信过程">二、TCP/IP 协议栈通信过程</h2>
-<figure data-type="image" tabindex="1"><img src="https://geraltxli.github.io/blog/post-images/1622358377997.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://geraltxli.github.io/post-images/1622358377997.png" alt="" loading="lazy"></figure>
 <h3 id="1-应用层">1. 应用层</h3>
 <p>定义数据格式，并按照格式解析数据。<br>
 此时是HTTP协议，header的content-type定义格式，body填数据</p>
@@ -544,7 +544,7 @@ func Dncrypt(rawData string,key []byte) (string,error) {
 <h4 id="协议栈上">协议栈上</h4>
 <p>添加了TCP首部，记录端口，确认主机上应用程序的身份，把数据包交给对应的应用程序</p>
 <h4 id="tcp三次握手和四次挥手">TCP三次握手和四次挥手</h4>
-<figure data-type="image" tabindex="2"><img src="https://geraltxli.github.io/blog/post-images/1622358358701.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://geraltxli.github.io/post-images/1622358358701.png" alt="" loading="lazy"></figure>
 <blockquote>
 <p>ESTABLISHED <code>əˈstabliSHt</code> 已建立成功的状态</p>
 </blockquote>

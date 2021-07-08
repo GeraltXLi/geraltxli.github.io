@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://geraltxli.github.io</id>
     <title>GeraltXLi</title>
-    <updated>2021-06-19T10:51:34.429Z</updated>
+    <updated>2021-07-08T15:00:15.609Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://geraltxli.github.io"/>
     <link rel="self" href="https://geraltxli.github.io/atom.xml"/>
@@ -10,6 +10,26 @@
     <logo>https://geraltxli.github.io/images/avatar.png</logo>
     <icon>https://geraltxli.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, GeraltXLi</rights>
+    <entry>
+        <title type="html"><![CDATA[服务端开发规范（未完待续）]]></title>
+        <id>https://geraltxli.github.io/post/fu-wu-duan-kai-fa-gui-fan-todo/</id>
+        <link href="https://geraltxli.github.io/post/fu-wu-duan-kai-fa-gui-fan-todo/">
+        </link>
+        <updated>2021-07-08T14:53:09.000Z</updated>
+        <summary type="html"><![CDATA[<p>服务端开发遵守的Git, CHANGELOG, Version规范。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>服务端开发遵守的Git, CHANGELOG, Version规范。</p>
+<!-- more -->
+<h2 id="开发规范">开发规范</h2>
+<ul>
+<li><a href="https://www.conventionalcommits.org/en/v1.0.0/">git commit规范</a></li>
+<li><a href="https://keepachangelog.com/en/1.0.0/">changelog规范</a></li>
+<li><a href="https://semver.org/lang/zh-CN/">版本规范</a></li>
+<li><a href="https://github.com/golang-standards/project-layout">Go项目目录结构</a></li>
+</ul>
+<p>未完待续...</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[微服务治理- 学习笔记（一）]]></title>
         <id>https://geraltxli.github.io/post/wei-fu-wu-zhi-li-fa-zhan-xue-xi/</id>

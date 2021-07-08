@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>微服务学习笔记 | GeraltXLi</title>
+<title>服务端开发规范（未完待续） | GeraltXLi</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -11,6 +11,12 @@
 <link rel="shortcut icon" href="https://geraltxli.github.io/favicon.ico?v=1625756413452">
 <link rel="stylesheet" href="https://geraltxli.github.io/styles/main.css">
 
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
 
 
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
@@ -29,7 +35,25 @@
 <script src="https://geraltxli.github.io/instantpage.js" type="module"></script>
 
 
-    <meta name="description" content="The flash that cuts through darkness, the light that breaks the night.">
+    <meta name="description" content="服务端开发遵守的Git, CHANGELOG, Version规范。
+
+开发规范
+
+git commit规范
+changelog规范
+版本规范
+Go项目目录结构
+
+未完待续...
+..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" type="text/css" href="https://geraltxli.github.io/highlight/styles/github-dark.css">
+    <script src="https://geraltxli.github.io/highlight/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+    
+      <link rel="prefetch" href="https://geraltxli.github.io/post/wei-fu-wu-zhi-li-fa-zhan-xue-xi/">
+    
   </head>
   <body>
     <div id="app" class="main">
@@ -99,35 +123,47 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          <h2 class="current-tag">标签: 微服务学习笔记</h2>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://geraltxli.github.io/post/wei-fu-wu-zhi-li-fa-zhan-xue-xi/">
-                  <h2 class="post-title">微服务治理- 学习笔记（一）</h2>
-                </a>
-                <div class="post-date">
-                  2021-06-19
-                </div>
-                <div class="post-abstract">
-                  <p>微服务是一种研发模式，不是开发里引入微服务框架即可，而是涉及整个开发周期。<br>
-最近在看《微服务治理》，顺便做下笔记，毕竟好记性不如烂键盘？</p>
-
-                </div>
+          <div class="post-detail">
+            <h2 class="post-title">服务端开发规范（未完待续）</h2>
+            <div class="post-date">2021-07-08</div>
+            
+              <div class="feature-container" style="background-image: url('https://geraltxli.github.io/post-images/fu-wu-duan-kai-fa-gui-fan-todo.jpg')">
               </div>
-              
-                <a class="right" href="https://geraltxli.github.io/post/wei-fu-wu-zhi-li-fa-zhan-xue-xi/">
-                  <div class="feature-container" style="background-image: url('https://geraltxli.github.io/post-images/wei-fu-wu-zhi-li-fa-zhan-xue-xi.jpg')">
-                  </div>
-                </a>
-              
-            </article>
-          
+            
+            <div class="post-content" v-pre>
+              <p>服务端开发遵守的Git, CHANGELOG, Version规范。</p>
+<!-- more -->
+<h2 id="开发规范">开发规范</h2>
+<ul>
+<li><a href="https://www.conventionalcommits.org/en/v1.0.0/">git commit规范</a></li>
+<li><a href="https://keepachangelog.com/en/1.0.0/">changelog规范</a></li>
+<li><a href="https://semver.org/lang/zh-CN/">版本规范</a></li>
+<li><a href="https://github.com/golang-standards/project-layout">Go项目目录结构</a></li>
+</ul>
+<p>未完待续...</p>
 
-          <div class="pagination-container">
-  
-  
-</div>
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://geraltxli.github.io/post/wei-fu-wu-zhi-li-fa-zhan-xue-xi/">
+                  <h3 class="post-title">
+                    微服务治理- 学习笔记（一）
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
 
         </div>
       </div>
@@ -148,6 +184,29 @@ var app = new Vue({
 </script>
 
 
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'f793622868010a23cf01',
+        clientSecret: 'fe2e90c65c7c3ce7dfa52e619d8a807eee42fdc4',
+        repo: 'geraltxli.github.io',
+        owner: 'GeraltXLi',
+        admin: ['GeraltXLi'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
 
 
 

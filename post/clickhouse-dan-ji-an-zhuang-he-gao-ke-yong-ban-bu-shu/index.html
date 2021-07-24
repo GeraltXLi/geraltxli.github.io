@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://geraltxli.github.io/favicon.ico?v=1625756413452">
+<link rel="shortcut icon" href="https://geraltxli.github.io/favicon.ico?v=1627134873835">
 <link rel="stylesheet" href="https://geraltxli.github.io/styles/main.css">
 
 
@@ -60,7 +60,7 @@ sudo ap..." />
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://geraltxli.github.io">
-        <img src="https://geraltxli.github.io/images/avatar.png?v=1625756413452" class="site-logo">
+        <img src="https://geraltxli.github.io/images/avatar.png?v=1627134873835" class="site-logo">
         <h1 class="site-title">GeraltXLi</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -363,12 +363,6 @@ services:
     &lt;replica&gt;hostname&lt;/replica&gt;
 &lt;/macros&gt;
 </code></pre>
-<h4 id="建表如果带上shard或者replica不能使用分布式ddl">建表如果带上{shard}或者{replica}，不能使用分布式DDL</h4>
-<p>具体见<a href="https://clickhouse.tech/docs/en/engines/table-engines/mergetree-family/replication/">官方文档replication描述</a></p>
-<blockquote>
-<p>The replica name identifies different replicas of the same table. You can use the server name for this, as in the example. The name only needs to be unique within each shard.<br>
-You can define the parameters explicitly instead of using substitutions. This might be convenient for testing and for configuring small clusters. However, you can’t use distributed DDL queries (ON CLUSTER) in this case.</p>
-</blockquote>
 <h3 id="最终配置文件">最终配置文件</h3>
 <h4 id="丢到configd目录下覆盖默认配置">丢到config.d目录下覆盖默认配置</h4>
 <ul>
@@ -390,8 +384,8 @@ You can define the parameters explicitly instead of using substitutions. This mi
 <pre><code class="language-sql">/*分布式DDL建库*/
 CREATE DATABASE test ON CLUSTER 'test_cluster'
 
-/*每台机器跑一次建表，但通过宏定义可以保证每个库建表语句一致*/
-CREATE TABLE test.test_info_local (
+/*分布式DDL建库，树引擎其实可以不写，就是默认值来的*/
+CREATE TABLE test.test_info_local ON CLUSTER 'test_cluster'(
     ......
 )ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}/test/test_info_local','{replica}')
 PARTITION BY record_time
@@ -417,7 +411,6 @@ ENGINE = Distributed(test_cluster,test,test_info_local,rand())
 
 </code></pre>
 <ul>
-<li>每个实例跑一次建表</li>
 <li>分布式DDL跑一次就够了</li>
 </ul>
 <h2 id="6-实际应用">6. 实际应用</h2>
@@ -435,6 +428,7 @@ ENGINE = Distributed(test_cluster,test,test_info_local,rand())
 <li>clickhouse允许相同主键的数据存在，是否去重以及去重的规则具体看表引擎决定。</li>
 <li>clickhouse不保证part merge的时机，这个是坑，某些实际应用场景时就会感受到的</li>
 <li>可以对视图再进行视图的聚合，不过要注意，本质上是insert事件触发了视图，视图并不知道原表的数据</li>
+<li>分布式用到zookeeper（这玩意还是没那么好用），这里依赖它主要是在分布式DDL执行和ReplicaMergeTree主备状态同步上（对于每个insert的数据part，clickhouse都会通过几个事务将记录添加到zookeeper上）</li>
 </ul>
 <p>有问题欢迎留言~</p>
 

@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://geraltxli.github.io/favicon.ico?v=1627134873835">
+<link rel="shortcut icon" href="https://geraltxli.github.io/favicon.ico?v=1627303865798">
 <link rel="stylesheet" href="https://geraltxli.github.io/styles/main.css">
 
 
@@ -57,7 +57,7 @@ ClickHouse® is a column-oriented d..." />
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://geraltxli.github.io">
-        <img src="https://geraltxli.github.io/images/avatar.png?v=1627134873835" class="site-logo">
+        <img src="https://geraltxli.github.io/images/avatar.png?v=1627303865798" class="site-logo">
         <h1 class="site-title">GeraltXLi</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -200,7 +200,7 @@ ClickHouse® is a column-oriented d..." />
 <li>
 <p><strong>向量计算引擎</strong>（可见参考描述）：</p>
 <ul>
-<li>SIMD即**&quot;single instruction, multiple data&quot;（单指令流多数据流）**，本质上是采用一个控制器来控制多个处理器，同时对一组数据中的每一条分别执行相同的操作，从而实现空间上的并行性的技术。</li>
+<li>SIMD即<strong>single instruction, multiple data&quot;（单指令流多数据流)</strong>，本质上是采用一个控制器来控制多个处理器，同时对一组数据中的每一条分别执行相同的操作，从而实现空间上的并行性的技术。</li>
 <li>CPU通过SSE指令集实现SIMD</li>
 <li>clickhouse充分应用SSE指令集：filter（批量处理128位）或者大小写转换（一次加载16个字段转换）</li>
 </ul>
@@ -263,7 +263,7 @@ ClickHouse® is a column-oriented d..." />
 <li>并发查询不要超过100/s</li>
 </ul>
 <h4 id="为啥这么快">为啥这么快</h4>
-<p>看列式数据库的特征和clickhouse本身feature就大概知道了，列式存储加上压缩，减少读取数据，更少的IO，相同查询占用更少内存（成本也更低）。同时支持并发处理，clickhouse本身对于压缩和数据向量又做了优化，能更好地利用CPU，多核并行处理。</p>
+<p>看列式数据库的特征和clickhouse本身feature就大概知道了，列式存储加上压缩，减少读取数据，更少的IO，相同查询占用更少内存（成本也更低）。同时支持并发处理，clickhouse本身对于压缩和数据向量并行处理又做了优化，能更好地利用CPU，多核并行处理。</p>
 <h2 id="三-备注">三、备注</h2>
 <p>以上基本就是自己扫一遍clickhouse官方文档的特性，理解一下列式数据库和clickhouse特性实际上大概做了什么事情。有啥问题欢迎指正~</p>
 <h1 id="参考">参考</h1>

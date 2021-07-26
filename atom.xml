@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://geraltxli.github.io</id>
     <title>GeraltXLi</title>
-    <updated>2021-07-24T13:55:05.149Z</updated>
+    <updated>2021-07-26T12:53:03.322Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://geraltxli.github.io"/>
     <link rel="self" href="https://geraltxli.github.io/atom.xml"/>
@@ -92,7 +92,7 @@
 <li>
 <p><strong>向量计算引擎</strong>（可见参考描述）：</p>
 <ul>
-<li>SIMD即**&quot;single instruction, multiple data&quot;（单指令流多数据流）**，本质上是采用一个控制器来控制多个处理器，同时对一组数据中的每一条分别执行相同的操作，从而实现空间上的并行性的技术。</li>
+<li>SIMD即<strong>single instruction, multiple data&quot;（单指令流多数据流)</strong>，本质上是采用一个控制器来控制多个处理器，同时对一组数据中的每一条分别执行相同的操作，从而实现空间上的并行性的技术。</li>
 <li>CPU通过SSE指令集实现SIMD</li>
 <li>clickhouse充分应用SSE指令集：filter（批量处理128位）或者大小写转换（一次加载16个字段转换）</li>
 </ul>
@@ -155,7 +155,7 @@
 <li>并发查询不要超过100/s</li>
 </ul>
 <h4 id="为啥这么快">为啥这么快</h4>
-<p>看列式数据库的特征和clickhouse本身feature就大概知道了，列式存储加上压缩，减少读取数据，更少的IO，相同查询占用更少内存（成本也更低）。同时支持并发处理，clickhouse本身对于压缩和数据向量又做了优化，能更好地利用CPU，多核并行处理。</p>
+<p>看列式数据库的特征和clickhouse本身feature就大概知道了，列式存储加上压缩，减少读取数据，更少的IO，相同查询占用更少内存（成本也更低）。同时支持并发处理，clickhouse本身对于压缩和数据向量并行处理又做了优化，能更好地利用CPU，多核并行处理。</p>
 <h2 id="三-备注">三、备注</h2>
 <p>以上基本就是自己扫一遍clickhouse官方文档的特性，理解一下列式数据库和clickhouse特性实际上大概做了什么事情。有啥问题欢迎指正~</p>
 <h1 id="参考">参考</h1>

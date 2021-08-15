@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>关于 | GeraltXLi</title>
+<title>Clickhosue 底层存储结构（学习笔记） | GeraltXLi</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -36,36 +36,18 @@
 <script src="https://geraltxli.github.io/instantpage.js" type="module"></script>
 
 
-    <meta name="description" content="
-Welcome🤝
+    <meta name="description" content="上一篇Clickhouse介绍大概描述了clickhouse的特性，这里讲讲实际底层的存储结构
 
-🏠 关于本站
-
-杂记
-图片来自pixabay
-
-👨‍💻 博主是谁
-
-服务端程序猿
-广州
-
-⛹ 兴趣爱好
-
-技术
-游戏
-
-📬 联系我
-
-邮箱：riviacodehunter@gmail.com
-欢迎留言
-
-..." />
-    <meta name="keywords" content="" />
+MergeTree存储结构
+查看clickhouse磁盘上的表数据结构，基本上就是下方的目录结构。表名目录下有很多分区，除非表没有设置分区，完..." />
+    <meta name="keywords" content="底层存储结构,clickhouse" />
     <link rel="stylesheet" type="text/css" href="https://geraltxli.github.io/highlight/styles/github-dark.css">
     <script src="https://geraltxli.github.io/highlight/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     
+    
+      <link rel="prefetch" href="https://geraltxli.github.io/post/clickhouse-xiang-jie/">
     
   </head>
   <body>
@@ -148,36 +130,81 @@ Welcome🤝
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">关于</h2>
-            <div class="post-date">2021-05-30 阅读次数：<span id="busuanzi_value_page_pv"></span></div>
+            <h2 class="post-title">Clickhosue 底层存储结构（学习笔记）</h2>
+            <div class="post-date">2021-07-31 阅读次数：<span id="busuanzi_value_page_pv"></span></div>
+            
+              <div class="feature-container" style="background-image: url('https://geraltxli.github.io/post-images/clickhosue-di-ceng-cun-chu-jie-gou-xue-xi-bi-ji.jpg')">
+              </div>
             
             <div class="post-content" v-pre>
-              <blockquote>
-<p>Welcome🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
+              <p>上一篇<a href="https://geraltxli.github.io/post/clickhouse-xiang-jie/">Clickhouse介绍</a>大概描述了clickhouse的特性，这里讲讲实际底层的存储结构</p>
+<!-- more -->
+<h2 id="mergetree存储结构">MergeTree存储结构</h2>
+<p>查看clickhouse磁盘上的表数据结构，基本上就是下方的目录结构。表名目录下有很多分区，除非表没有设置分区，完全就只在all分区上。</p>
+<pre><code class="language-bash">└─clickhouse
+    └─table
+        └─partition_1
+            └─checksum.txt(当前目录各个文件的大小以及各文件内容的hash)
+            └─columns.txt（设计所有列和列的类型）
+            └─count.txt（此part数据行数）
+            └─primary.idx （主键稀疏索引，找到bin里面对应的block）
+            └─[Column].bin （对应列的实际数据内容）
+            └─[Column].mrk （对应列的标记文件，辅助索引进一步找到block内的granularity）
+用了分区键产生 └─partition.dat (用了分区间)
+用了分区键产生 └─minmax_[Column].idx
+用二级索引产生 └─skp_idx_[Column].idx
+用二级索引产生 └─skp_idx_[Column].mrk
+</code></pre>
+<p>一次数据写入请求</p>
 <ul>
-<li>杂记</li>
-<li>图片来自<strong>pixabay</strong></li>
+<li>数据根据<code>index_granularity</code>（默认8192）切成多个颗粒（granularity）</li>
+<li>多个<code>granularity</code>在内存中积攒一定大小，按照其压缩前的数据字节大小，都被严格的控制在<strong>64K~1M</strong>之间，其上下限分别由<code>min_compress_block_size</code>(默认65536)与<code>max_compress_block_size</code>(默认1048576)参数指定。满足条件后触发压缩和落盘，形成一个block（clickhouse与磁盘交互扫描的最小单位）
+<ul>
+<li>头文件（压缩方法，压缩前后大小）</li>
+<li>压缩数据</li>
 </ul>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<ul>
-<li>服务端程序猿</li>
-<li>广州</li>
+</li>
+<li>多个block落地成一个bin文件（数据内容），和其他相关文件一起落到同一个part。即<strong>新增了一个目录</strong>，所以官方才会建议insert频率降低或者一次insert的batch size要足够大，否则会影响IO和目录数过大耗尽inode，影响数据合并性能</li>
 </ul>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
+<h2 id="参考">参考</h2>
 <ul>
-<li>技术</li>
-<li>游戏</li>
-</ul>
-<h2 id="联系我">📬 联系我</h2>
-<ul>
-<li>邮箱：riviacodehunter@gmail.com</li>
-<li>欢迎留言</li>
+<li>
+<p><a href="https://www.cnblogs.com/eedbaa/p/14512803.html">Clickhouse数据存储结构</a></p>
+</li>
+<li>
+<p><a href="https://blog.csdn.net/weixin_34148340/article/details/94320571">clickhouse底层存储原理</a></p>
+</li>
+<li>
+<p><a href="https://cloud.tencent.com/developer/article/1814617">ClickHouse高性能列存核心原理</a></p>
+</li>
+<li>
+<p><a href="https://github.com/ClickHouse/clickhouse-presentations/blob/master/meetup32/%E6%9C%B1%E5%87%AF.ppt">Clickhouse MergeTree原理解析</a></p>
+</li>
 </ul>
 
             </div>
             
+              <div class="tag-container">
+                
+                  <a href="https://geraltxli.github.io/tag/Bbs0UyB_1/" class="tag">
+                    底层存储结构
+                  </a>
+                
+                  <a href="https://geraltxli.github.io/tag/NhcxUV7yk/" class="tag">
+                    clickhouse
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://geraltxli.github.io/post/clickhouse-xiang-jie/">
+                  <h3 class="post-title">
+                    Clickhouse 介绍
+                  </h3>
+                </a>
+              </div>
             
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4499802252514755"
                 crossorigin="anonymous"></script>

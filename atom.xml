@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://geraltxli.github.io</id>
     <title>GeraltXLi</title>
-    <updated>2021-07-31T03:16:15.314Z</updated>
+    <updated>2021-08-15T15:49:53.392Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://geraltxli.github.io"/>
     <link rel="self" href="https://geraltxli.github.io/atom.xml"/>
@@ -13,11 +13,65 @@
     <icon>https://geraltxli.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, GeraltXLi</rights>
     <entry>
+        <title type="html"><![CDATA[Clickhosue 底层存储结构（学习笔记）]]></title>
+        <id>https://geraltxli.github.io/post/clickhosue-di-ceng-cun-chu-jie-gou-xue-xi-bi-ji/</id>
+        <link href="https://geraltxli.github.io/post/clickhosue-di-ceng-cun-chu-jie-gou-xue-xi-bi-ji/">
+        </link>
+        <updated>2021-07-31T09:56:55.000Z</updated>
+        <summary type="html"><![CDATA[<p>上一篇<a href="https://geraltxli.github.io/post/clickhouse-xiang-jie/">Clickhouse介绍</a>大概描述了clickhouse的特性，这里讲讲实际底层的存储结构</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>上一篇<a href="https://geraltxli.github.io/post/clickhouse-xiang-jie/">Clickhouse介绍</a>大概描述了clickhouse的特性，这里讲讲实际底层的存储结构</p>
+<!-- more -->
+<h2 id="mergetree存储结构">MergeTree存储结构</h2>
+<p>查看clickhouse磁盘上的表数据结构，基本上就是下方的目录结构。表名目录下有很多分区，除非表没有设置分区，完全就只在all分区上。</p>
+<pre><code class="language-bash">└─clickhouse
+    └─table
+        └─partition_1
+            └─checksum.txt(当前目录各个文件的大小以及各文件内容的hash)
+            └─columns.txt（设计所有列和列的类型）
+            └─count.txt（此part数据行数）
+            └─primary.idx （主键稀疏索引，找到bin里面对应的block）
+            └─[Column].bin （对应列的实际数据内容）
+            └─[Column].mrk （对应列的标记文件，辅助索引进一步找到block内的granularity）
+用了分区键产生 └─partition.dat (用了分区间)
+用了分区键产生 └─minmax_[Column].idx
+用二级索引产生 └─skp_idx_[Column].idx
+用二级索引产生 └─skp_idx_[Column].mrk
+</code></pre>
+<p>一次数据写入请求</p>
+<ul>
+<li>数据根据<code>index_granularity</code>（默认8192）切成多个颗粒（granularity）</li>
+<li>多个<code>granularity</code>在内存中积攒一定大小，按照其压缩前的数据字节大小，都被严格的控制在<strong>64K~1M</strong>之间，其上下限分别由<code>min_compress_block_size</code>(默认65536)与<code>max_compress_block_size</code>(默认1048576)参数指定。满足条件后触发压缩和落盘，形成一个block（clickhouse与磁盘交互扫描的最小单位）
+<ul>
+<li>头文件（压缩方法，压缩前后大小）</li>
+<li>压缩数据</li>
+</ul>
+</li>
+<li>多个block落地成一个bin文件（数据内容），和其他相关文件一起落到同一个part。即<strong>新增了一个目录</strong>，所以官方才会建议insert频率降低或者一次insert的batch size要足够大，否则会影响IO和目录数过大耗尽inode，影响数据合并性能</li>
+</ul>
+<h2 id="参考">参考</h2>
+<ul>
+<li>
+<p><a href="https://www.cnblogs.com/eedbaa/p/14512803.html">Clickhouse数据存储结构</a></p>
+</li>
+<li>
+<p><a href="https://blog.csdn.net/weixin_34148340/article/details/94320571">clickhouse底层存储原理</a></p>
+</li>
+<li>
+<p><a href="https://cloud.tencent.com/developer/article/1814617">ClickHouse高性能列存核心原理</a></p>
+</li>
+<li>
+<p><a href="https://github.com/ClickHouse/clickhouse-presentations/blob/master/meetup32/%E6%9C%B1%E5%87%AF.ppt">Clickhouse MergeTree原理解析</a></p>
+</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[Clickhouse 介绍]]></title>
         <id>https://geraltxli.github.io/post/clickhouse-xiang-jie/</id>
         <link href="https://geraltxli.github.io/post/clickhouse-xiang-jie/">
         </link>
-        <updated>2021-07-08T15:02:50.000Z</updated>
+        <updated>2021-07-25T07:02:50.000Z</updated>
         <summary type="html"><![CDATA[<p>概述OLAP场景与列式数据库特征，以及Clickhouse这数据库的各个特性（各个特性的组合实现了clickhouse的高性能）</p>
 ]]></summary>
         <content type="html"><![CDATA[<p>概述OLAP场景与列式数据库特征，以及Clickhouse这数据库的各个特性（各个特性的组合实现了clickhouse的高性能）</p>

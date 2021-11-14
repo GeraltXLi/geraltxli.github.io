@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://geraltxli.github.io</id>
     <title>GeraltXLi</title>
-    <updated>2021-08-15T15:49:53.392Z</updated>
+    <updated>2021-11-14T13:49:30.986Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://geraltxli.github.io"/>
     <link rel="self" href="https://geraltxli.github.io/atom.xml"/>
@@ -12,6 +12,40 @@
     <logo>https://geraltxli.github.io/images/avatar.png</logo>
     <icon>https://geraltxli.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, GeraltXLi</rights>
+    <entry>
+        <title type="html"><![CDATA[iOS稳定性问题治理-笔记]]></title>
+        <id>https://geraltxli.github.io/post/ios-wen-ding-xing-wen-ti-zhi-li-bi-ji/</id>
+        <link href="https://geraltxli.github.io/post/ios-wen-ding-xing-wen-ti-zhi-li-bi-ji/">
+        </link>
+        <updated>2021-11-14T13:36:56.000Z</updated>
+        <summary type="html"><![CDATA[<blockquote>
+<p>最近参加ArchSummit，听字节APM线分享相关内容，收获不少，做个笔记</p>
+</blockquote>
+]]></summary>
+        <content type="html"><![CDATA[<blockquote>
+<p>最近参加ArchSummit，听字节APM线分享相关内容，收获不少，做个笔记</p>
+</blockquote>
+<!-- more -->
+<h2 id="todo">TODO</h2>
+<p>占坑明天写</p>
+<h2 id="参考内容">参考内容</h2>
+<ul>
+<li>字节ArchSummit上分享的PPT (如何系统性治理iOS稳定性问题)[https://ppt.infoq.cn/slide/download?cid=85&amp;pid=3581]</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Golang脑图]]></title>
+        <id>https://geraltxli.github.io/post/golang-nao-tu/</id>
+        <link href="https://geraltxli.github.io/post/golang-nao-tu/">
+        </link>
+        <updated>2021-08-15T16:02:32.000Z</updated>
+        <summary type="html"><![CDATA[<p>Golang知识图谱，梳理知识</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>Golang知识图谱，梳理知识</p>
+<!-- more -->
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Clickhosue 底层存储结构（学习笔记）]]></title>
         <id>https://geraltxli.github.io/post/clickhosue-di-ceng-cun-chu-jie-gou-xue-xi-bi-ji/</id>
@@ -33,10 +67,10 @@
             └─primary.idx （主键稀疏索引，找到bin里面对应的block）
             └─[Column].bin （对应列的实际数据内容）
             └─[Column].mrk （对应列的标记文件，辅助索引进一步找到block内的granularity）
-用了分区键产生 └─partition.dat (用了分区间)
-用了分区键产生 └─minmax_[Column].idx
-用二级索引产生 └─skp_idx_[Column].idx
-用二级索引产生 └─skp_idx_[Column].mrk
+用了分区键   └─partition.dat (用了分区间)
+用了分区键   └─minmax_[Column].idx
+用二级索引   └─skp_idx_[Column].idx
+用二级索引   └─skp_idx_[Column].mrk
 </code></pre>
 <p>一次数据写入请求</p>
 <ul>

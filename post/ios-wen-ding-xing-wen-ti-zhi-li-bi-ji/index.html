@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://geraltxli.github.io/favicon.ico?v=1636897769777">
+<link rel="shortcut icon" href="https://geraltxli.github.io/favicon.ico?v=1637161389651">
 <link rel="stylesheet" href="https://geraltxli.github.io/styles/main.css">
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
@@ -37,15 +37,20 @@
 
 
     <meta name="description" content="
-最近参加ArchSummit，听字节APM线分享相关内容，收获不少，做个笔记
+最近参加ArchSummit，听字节APM线分享iOS的OOM和Watchdog等问题的治理，刚好工作也相关，收获不少，做个笔记
 
 
-TODO
-占坑明天写
-参考内容
+分类
 
-字节ArchSummit上分享的PPT (如何系统性治理iOS稳定性问题)[https://ppt.infoq.cn/sl..." />
-    <meta name="keywords" content="apm,iOS" />
+OOM
+Watchdog
+Crash
+Disk I/O 异常
+CPU异常
+
+OOM
+OOM问题没..." />
+    <meta name="keywords" content="OOM,Watchdog,治理,apm,iOS" />
     <link rel="stylesheet" type="text/css" href="https://geraltxli.github.io/highlight/styles/github-dark.css">
     <script src="https://geraltxli.github.io/highlight/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
@@ -62,7 +67,7 @@ TODO
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://geraltxli.github.io">
-        <img src="https://geraltxli.github.io/images/avatar.png?v=1636897769777" class="site-logo">
+        <img src="https://geraltxli.github.io/images/avatar.png?v=1637161389651" class="site-logo">
         <h1 class="site-title">
           GeraltXLi
         </h1>
@@ -143,19 +148,86 @@ TODO
             
             <div class="post-content" v-pre>
               <blockquote>
-<p>最近参加ArchSummit，听字节APM线分享相关内容，收获不少，做个笔记</p>
+<p>最近参加ArchSummit，听字节APM线分享iOS的OOM和Watchdog等问题的治理，刚好工作也相关，收获不少，做个笔记</p>
 </blockquote>
 <!-- more -->
-<h2 id="todo">TODO</h2>
-<p>占坑明天写</p>
+<h2 id="分类">分类</h2>
+<ul>
+<li>OOM</li>
+<li>Watchdog</li>
+<li>Crash</li>
+<li>Disk I/O 异常</li>
+<li>CPU异常</li>
+</ul>
+<h2 id="oom">OOM</h2>
+<p>OOM问题没有明确调用栈，也很难复现，字节解决方法是MemoryGraph</p>
+<ol>
+<li>App物理内存占用超过一定值（根据实际情况设定）就会内存dump下来，</li>
+<li>对各个内存节点进行符号化（SDK直接做符号化的话，系统库这部分没问题，不过APP程序符号不是strip掉了么，不过实际操作都好解决）</li>
+<li>和记录彼此的强弱引用关系（通过内存地址来判断相互之间的引用关系）</li>
+<li>上报到后台分析大内存占用和内存泄露问题。</li>
+</ol>
+<p>常见原因：</p>
+<ul>
+<li>内存泄露</li>
+<li>内存堆积</li>
+<li>资源异常</li>
+<li>内存使用不当</li>
+</ul>
+<h2 id="watchdog">Watchdog</h2>
+<p>方法;</p>
+<ol>
+<li>
+<p>多次抓栈并记录主线程的线程状态（其他线程也会抓，但相对主线程来说没那么频繁）</p>
+</li>
+<li>
+<p>根据调用栈，CPU占用和状态，线程标记来判断是否存在死锁或者死循环</p>
+</li>
+</ol>
+<p>一般排查卡顿的确也会考虑定期从寄存器抓取线程堆栈，维护一定时间区间内的栈信息（毕竟卡顿时刻的堆栈并不一定是原因所在，所以需要是区间），再检测到卡顿时上报到后端，辅助排查。不过就是要注意性能开销，，免得检测工具本身反而成为影响性能的原因。</p>
+<p>常见原因:</p>
+<ul>
+<li>
+<p>死锁</p>
+</li>
+<li>
+<p>锁竞争</p>
+</li>
+<li>
+<p>主线程IO</p>
+</li>
+<li>
+<p>跨进程通信</p>
+</li>
+</ul>
+<h2 id="crash">Crash</h2>
+<p>方法：</p>
+<ul>
+<li>生成coredump（常见操作，没啥好说的，有当前时刻的完整运行状态）</li>
+<li>iOS线上开启<code>Zombie Object</code>，就是OC对象销毁hook掉，生成僵尸对象，只要野指针指向僵尸对象，再次访问就会崩溃在那里，这样就能拿到真正的错误现场（值得注意的是，这里相当于内存没有回收掉，某种意义上的内存泄露，所以线上开启时必须要对对象的数量有限制）</li>
+</ul>
+<h2 id="cpudisk-io">CPU&amp;Disk I/O</h2>
+<p>基于MetricKit框架获取处理（我只是一个小服务端，不大了解苹果这框架，就酱）</p>
 <h2 id="参考内容">参考内容</h2>
 <ul>
-<li>字节ArchSummit上分享的PPT (如何系统性治理iOS稳定性问题)[https://ppt.infoq.cn/slide/download?cid=85&amp;pid=3581]</li>
+<li>字节ArchSummit上分享的PPT  <a href="https://ppt.infoq.cn/slide/download?cid=85&amp;pid=3581">如何系统性治理iOS稳定性问题-丰亚东</a></li>
 </ul>
 
             </div>
             
               <div class="tag-container">
+                
+                  <a href="https://geraltxli.github.io/tag/OEuM4GuOr/" class="tag">
+                    OOM
+                  </a>
+                
+                  <a href="https://geraltxli.github.io/tag/4WlzBwt-fy/" class="tag">
+                    Watchdog
+                  </a>
+                
+                  <a href="https://geraltxli.github.io/tag/JcBq5t50dt/" class="tag">
+                    治理
+                  </a>
                 
                   <a href="https://geraltxli.github.io/tag/pYFO4mvFu/" class="tag">
                     apm

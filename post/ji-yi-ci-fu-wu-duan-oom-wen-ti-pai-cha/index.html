@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://geraltxli.github.io/favicon.ico?v=1637161816111">
+<link rel="shortcut icon" href="https://geraltxli.github.io/favicon.ico?v=1637333250994">
 <link rel="stylesheet" href="https://geraltxli.github.io/styles/main.css">
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
@@ -36,15 +36,11 @@
 <script src="https://geraltxli.github.io/instantpage.js" type="module"></script>
 
 
-    <meta name="description" content="记灰度环境碰到服务OOM的问题的排查过程与解决方法
+    <meta name="description" content="记灰度环境一次碰到服务OOM的问题的排查过程与解决方法
 
-TODO
+记一次服务端OOM问题排查过程与解决方法
 背景
-问题
-排查过程
-处理方法
-占坑
-..." />
+起因是改了服务算法里匹配部分的代码，从串行改为并行，然后丢到灰度环境，重放线上流量时，容器内存占用上涨不少，几G有时候会上涨到二十G，..." />
     <meta name="keywords" content="服务端,优化,OOM,Golang" />
     <link rel="stylesheet" type="text/css" href="https://geraltxli.github.io/highlight/styles/github-dark.css">
     <script src="https://geraltxli.github.io/highlight/highlight.pack.js"></script>
@@ -62,7 +58,7 @@ TODO
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://geraltxli.github.io">
-        <img src="https://geraltxli.github.io/images/avatar.png?v=1637161816111" class="site-logo">
+        <img src="https://geraltxli.github.io/images/avatar.png?v=1637333250994" class="site-logo">
         <h1 class="site-title">
           GeraltXLi
         </h1>
@@ -142,14 +138,31 @@ TODO
               </div>
             
             <div class="post-content" v-pre>
-              <p>记灰度环境碰到服务OOM的问题的排查过程与解决方法</p>
+              <p>记灰度环境一次碰到服务OOM的问题的排查过程与解决方法</p>
 <!-- more -->
-<h1 id="todo">TODO</h1>
+<h1 id="记一次服务端oom问题排查过程与解决方法">记一次服务端OOM问题排查过程与解决方法</h1>
 <h2 id="背景">背景</h2>
-<h2 id="问题">问题</h2>
+<p>起因是改了服务算法里匹配部分的代码，从串行改为并行，然后丢到灰度环境，重放线上流量时，容器内存占用上涨不少，几G有时候会上涨到二十G，然后触发OOMKILL。</p>
 <h2 id="排查过程">排查过程</h2>
+<h3 id="profile直接看实际内存占用">profile直接看实际内存占用</h3>
+<blockquote>
+<p>首先排除是Golang runtime归还内存给操作系统的策略导致，因为之前踩过MADV_FREE的坑。现在用的版本是Go1.16，归还策略已经改回去了</p>
+</blockquote>
+<ol>
+<li>查看内存占用，采集上涨前后对比，发现inuse的堆内存并没有实际那么高，最多才1G，而且前后没有明显的上涨，跟监控里服务实际使用内存相差太多了</li>
+<li>进一步看meminfo分析，服务在不断进行大量分配和回收内存</li>
+<li>切换一下，查看alloc的内存，发现大量分配内存在代码里两个字符串最长公共子序列LCS的计算上</li>
+<li>观察算法，就是很正常M*N的二维数组动规算法来算LCS，咋一看好像没啥问题，总共才十来行代码</li>
+<li>拿线上数据本地跑一下发现，有几千词的字符串占用大小是30KB左右，跟相同差不多长度的匹配时，一个gorouine就上百MB，我改成并行后就上1GB往上了，更别说实际服务有几十个worker运行，所以的确能触发这么高的内存占用</li>
+</ol>
 <h2 id="处理方法">处理方法</h2>
-<p>占坑</p>
+<p>两个方向：</p>
+<ol>
+<li>其实来到算法这里的字符串正常不应该这么长，在前面步骤应该裁剪到一定程度，不过这是业务部分的逻辑。</li>
+<li>优化DP算法，正常DP的状态转移记录都是可以压缩的，把二维数组压缩到一维，将O(N*M)的空间复杂度减少至O(N)复杂度，即可解决。</li>
+</ol>
+<h2 id="后记">后记</h2>
+<p>改完后内存占用直接降到1G以内，数据结构与算法果然是第一生产力。</p>
 
             </div>
             

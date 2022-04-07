@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://geraltxli.github.io</id>
     <title>GeraltXLi</title>
-    <updated>2021-11-19T14:47:33.207Z</updated>
+    <updated>2022-04-07T14:37:40.132Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://geraltxli.github.io"/>
     <link rel="self" href="https://geraltxli.github.io/atom.xml"/>
@@ -11,7 +11,55 @@
 &lt;/span&gt;</subtitle>
     <logo>https://geraltxli.github.io/images/avatar.png</logo>
     <icon>https://geraltxli.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2021, GeraltXLi</rights>
+    <rights>All rights reserved 2022, GeraltXLi</rights>
+    <entry>
+        <title type="html"><![CDATA[Clickhouse 修改Materialized view]]></title>
+        <id>https://geraltxli.github.io/post/clickhouse-xiu-gai-materialized-view/</id>
+        <link href="https://geraltxli.github.io/post/clickhouse-xiu-gai-materialized-view/">
+        </link>
+        <updated>2022-04-07T14:03:20.000Z</updated>
+        <summary type="html"><![CDATA[<p>如何修改线上的Materialized View</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>如何修改线上的Materialized View</p>
+<!-- more -->
+<h2 id="背景">背景</h2>
+<p>有时候，生产环境的Materialized View难免需要修改，平滑变更以及数据量过大都是需要面对的问题。</p>
+<h2 id="修改方法">修改方法</h2>
+<h3 id="一-explicit-table-to-dest">一、 Explicit table (TO dest)</h3>
+<ol>
+<li>停止写入</li>
+<li>修改原始表 dest</li>
+<li>create materialized view new_view</li>
+<li>exchange tables  new and old</li>
+<li>drop table new</li>
+</ol>
+<p>这个流程基本上可以不影响线上环境完成变更，甚至条件允许的话，都可以直接drop原mv，直接重新建一个</p>
+<h3 id="二-implicit-table-innermv">二、 Implicit table (.inner.mv)</h3>
+<p>Detach来改，网上已经有不少提到这个方法</p>
+<ul>
+<li>Detach table</li>
+<li>定位一下元数据文件所在路径，上机器修改一下那个sql文件</li>
+<li>Attch回去</li>
+</ul>
+<p>这个方法能用但没那么好用，且不说集群需要同步所有机器，我要是用个SaaS服务连机器都上不去。。。</p>
+<p>但implicit table的确没法直接改，要是有其他更好方法大家可以分享下。</p>
+<h2 id="其他思路">其他思路</h2>
+<ol>
+<li>
+<p>数据量不大的话直接一把梭<br>
+​	直接<code>CREATE Materialized View xxx_new ... populate AS SELECT ....</code><br>
+​	但要注意populate过程中不要有数据插入，然后我踩了个坑，如果数据量涉及的partition如果有    点多但实际数据量其实还好），会出现<br>
+<code>Too many partitions for single INSERT block more than 100)</code>这个问题。<br>
+​    感觉上populate像是当初一次insert执行的样子，不改分区键的话，可以临时调大再执行<br>
+​	<code>set max_partitions_per_insert_block=600;</code></p>
+</li>
+<li>
+<p>数据量大的话<br>
+考虑新建一个mv（TO dest），然后insert select 到 dest表吧</p>
+</li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[记一次服务端OOM问题排查过程与解决方法]]></title>
         <id>https://geraltxli.github.io/post/ji-yi-ci-fu-wu-duan-oom-wen-ti-pai-cha/</id>
@@ -844,153 +892,6 @@ ENGINE = Distributed(test_cluster,test,test_info_local,rand())
     &lt;script src=&quot;&lt;%= themeConfig.domain %&gt;/highlight/highlight.pack.js&quot;&gt;&lt;/script&gt;
     &lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt;
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Golang-AES加密（CBC模式，PKCS7填充）]]></title>
-        <id>https://geraltxli.github.io/post/golang-aes-jia-mi-cbc-mo-shi-pkcs7-tian-chong/</id>
-        <link href="https://geraltxli.github.io/post/golang-aes-jia-mi-cbc-mo-shi-pkcs7-tian-chong/">
-        </link>
-        <updated>2021-05-30T13:33:56.000Z</updated>
-        <summary type="html"><![CDATA[<p><a href="https://github.com/FakerGit/go-tools/tree/master/encrypt">代码地址</a></p>
-<blockquote>
-<p>对称加密算法，即加密和解密使用一样的密钥的加解密算法。<br>
-分组密码（block cipher），是每次只能处理特定长度的一块（block）数据的一类加解密算法。<br>
-目前常见的对称加密算法DES、3DES、AES都是属于分组密码。</p>
-</blockquote>
-]]></summary>
-        <content type="html"><![CDATA[<p><a href="https://github.com/FakerGit/go-tools/tree/master/encrypt">代码地址</a></p>
-<blockquote>
-<p>对称加密算法，即加密和解密使用一样的密钥的加解密算法。<br>
-分组密码（block cipher），是每次只能处理特定长度的一块（block）数据的一类加解密算法。<br>
-目前常见的对称加密算法DES、3DES、AES都是属于分组密码。</p>
-</blockquote>
-<!-- more -->
-<h3 id="背景">背景</h3>
-<p>Golang没有像PHP那样提供一个现成的aes加密函数，不过标准库里有crypto，利用里面的aes等可以自己封装个加密函数，不过需要理解下整个加解密的过程和原理</p>
-<!-- more -->
-<hr>
-<h3 id="aes加密详解">AES加密详解</h3>
-<h4 id="1-参考文章golang-中aes加密详解">1. 参考文章<a href="https://blog.csdn.net/xiaohu50/article/details/51682849">golang 中AES加密详解</a></h4>
-<h4 id="2-这里使用的是aes加密中的cbc模式块加密需要划分成整数长度相等个消息块不断加密串行分组长度是固定128位但密钥的长度可以使用128位192位或者256位这里指的是bit即密钥162432长度对应aes-128-aes-192-aes-256">2. 这里使用的是AES加密中的CBC模式，块加密需要划分成整数长度相等个消息块不断加密（串行），分组长度是固定128位，但密钥的长度可以使用128位，192位或者256位（这里指的是bit），即密钥16，24，32长度对应AES-128, AES-192, AES-256。</h4>
-<h4 id="3初始向量要求随机但不需要保密">3.初始向量要求随机，但不需要保密。</h4>
-<hr>
-<h3 id="代码">代码</h3>
-<p>自己研究代码比较清晰，根据<a href="https://golang.org/src/crypto/cipher/example_test.go">golang标准库AES实例代码</a>，再参考网上的PKCS7填充，最后进行base64的编码（因为加密后有些字符不可见）。最后Encrypt和Dncrypt两个就是AES加解密（CBC模式，PKCS7填充）封装后的函数，密钥位数限定16,24,32（要注意的是密钥无论多少，blocksize都是固定16）</p>
-<pre><code class="language-go">package encrypt
-
-import (
-   &quot;bytes&quot;
-   &quot;crypto/aes&quot;
-   &quot;io&quot;
-   &quot;crypto/rand&quot;
-   &quot;crypto/cipher&quot;
-   &quot;encoding/base64&quot;
-)
-
-/*CBC加密 按照golang标准库的例子代码
-不过里面没有填充的部分,所以补上
-*/
-
-//使用PKCS7进行填充，IOS也是7
-func PKCS7Padding(ciphertext []byte, blockSize int) []byte {
-   padding := blockSize - len(ciphertext) % blockSize
-   padtext := bytes.Repeat([]byte{byte(padding)}, padding)
-   return append(ciphertext, padtext...)
-}
-
-func PKCS7UnPadding(origData []byte) []byte {
-   length := len(origData)
-   unpadding := int(origData[length-1])
-   return origData[:(length - unpadding)]
-}
-
-//aes加密，填充秘钥key的16位，24,32分别对应AES-128, AES-192, or AES-256.
-func AesCBCEncrypt(rawData,key []byte) ([]byte, error) {
-   block, err := aes.NewCipher(key)
-   if err != nil {
-   	panic(err)
-   }
-
-   //填充原文
-   blockSize := block.BlockSize()
-   rawData = PKCS7Padding(rawData, blockSize)
-   //初始向量IV必须是唯一，但不需要保密
-   cipherText := make([]byte,blockSize+len(rawData))
-   //block大小 16
-   iv := cipherText[:blockSize]
-   if _, err := io.ReadFull(rand.Reader,iv); err != nil {
-   	panic(err)
-   }
-
-   //block大小和初始向量大小一定要一致
-   mode := cipher.NewCBCEncrypter(block,iv)
-   mode.CryptBlocks(cipherText[blockSize:],rawData)
-
-   return cipherText, nil
-}
-
-func AesCBCDncrypt(encryptData, key []byte) ([]byte,error) {
-   block, err := aes.NewCipher(key)
-   if err != nil {
-   	panic(err)
-   }
-
-   blockSize := block.BlockSize()
-
-   if len(encryptData) &lt; blockSize {
-   	panic(&quot;ciphertext too short&quot;)
-   }
-   iv := encryptData[:blockSize]
-   encryptData = encryptData[blockSize:]
-
-   // CBC mode always works in whole blocks.
-   if len(encryptData)%blockSize != 0 {
-   	panic(&quot;ciphertext is not a multiple of the block size&quot;)
-   }
-
-   mode := cipher.NewCBCDecrypter(block, iv)
-
-   // CryptBlocks can work in-place if the two arguments are the same.
-   mode.CryptBlocks(encryptData, encryptData)
-   //解填充
-   encryptData = PKCS7UnPadding(encryptData)
-   return encryptData,nil
-}
-
-
-func Encrypt(rawData,key []byte) (string,error) {
-   data, err:= AesCBCEncrypt(rawData,key)
-   if err != nil {
-   	return &quot;&quot;,err
-   }
-   return base64.StdEncoding.EncodeToString(data),nil
-}
-
-func Dncrypt(rawData string,key []byte) (string,error) {
-   data,err := base64.StdEncoding.DecodeString(rawData)
-   if err != nil {
-   	return &quot;&quot;,err
-   }
-   dnData,err := AesCBCDncrypt(data,key)
-   if err != nil {
-   	return &quot;&quot;,err
-   }
-   return string(dnData),nil
-}
-</code></pre>
-<pre><code class="language-json">{
-    &quot;json&quot;:&quot;123&quot;,
-    &quot;hah&quot;:&quot;123&quot;
-}
-</code></pre>
-<hr>
-<p><a href="https://github.com/FakerGit/go-tools">github代码地址</a></p>
-<hr>
-<p>参考：</p>
-<ol>
-<li><a href="https://blog.csdn.net/xiaohu50/article/details/51682849">golang 中AES加密详解</a></li>
-</ol>
 ]]></content>
     </entry>
 </feed>
